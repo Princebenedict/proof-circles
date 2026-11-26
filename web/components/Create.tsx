@@ -27,7 +27,7 @@ export default function Create({ canAct, onCreated }: { canAct: boolean; onCreat
       const token = kind === "usdt" ? USDT : ZERO;
       const amt = kind === "none" ? 0n : parseEther(amount);
       if (kind === "usdt") {
-        const allowance = (await pc!.readContract({ address: USDT, abi: erc20Abi, functionName: "allowance", args: [address!, PROOF] })) as bigint;
+        const allowance = (await pc!.readContract({ address: USDT, abi: erc20Abi, functionName: "allowance", args: [address!, PROOF] } as any)) as bigint;
         if (allowance < amt) {
           const h = await w({ address: USDT, abi: erc20Abi, functionName: "approve", args: [PROOF, amt] });
           await pc!.waitForTransactionReceipt({ hash: h });

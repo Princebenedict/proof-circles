@@ -24,7 +24,7 @@ export default function Circles({ canAct, onCreate }: { canAct: boolean; onCreat
     contracts: circles.map((c) => ({ address: PROOF, abi: proofAbi, functionName: "isParticipant", args: [c.id, address], chainId: chain.id })),
     query: { enabled: !!address && circles.length > 0 },
   });
-  const mine = new Set(circles.filter((_, i) => flags?.[i]?.result === true).map((c) => c.id));
+  const mine = new Set(circles.filter((_, i) => (flags?.[i]?.result as unknown) === true).map((c) => c.id));
   const shown = filter === "mine" ? circles.filter((c) => mine.has(c.id)) : circles;
 
   if (!configured) return <EmptyNote>Contract address is not set. Add NEXT_PUBLIC_PROOF_CIRCLES to web/.env.local</EmptyNote>;
@@ -171,8 +171,8 @@ function ContributeForm({ id }: { id: bigint }) {
   async function submit() {
     await tx.run(async (w) => {
       const dataHash = keccak256(toBytes(text.trim()));
-      const digest = (await pc!.readContract({ address: PROOF, abi: proofAbi, functionName: "contributionDigest", args: [id, address!, dataHash] })) as `0x${string}`;
-      const signature = await signMessageAsync({ message: { raw: digest } });
+      const digest = (await pc!.readContract({ address: PROOF, abi: proofAbi, functionName: "contributionDigest", args: [id, address!, dataHash] } as any)) as `0x${string}`;
+      const signature = await signMessageAsync({ message: { raw: digest } } as any);
       return w({ address: PROOF, abi: proofAbi, functionName: "submitContribution", args: [id, dataHash, uri.trim(), signature] });
     });
   }

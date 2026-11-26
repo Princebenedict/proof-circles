@@ -34,11 +34,11 @@ export function useAgent(address?: `0x${string}`) {
     enabled: !!address && !!pc,
     staleTime: 60_000,
     queryFn: async () => {
-      const bal = (await pc!.readContract({ address: AGENT_ID, abi: agentAbi, functionName: "balanceOf", args: [address!] })) as bigint;
+      const bal = (await pc!.readContract({ address: AGENT_ID, abi: agentAbi, functionName: "balanceOf", args: [address!] } as any)) as bigint;
       if (bal === 0n) return { holder: false, name: null as string | null };
       let name: string | null = null;
       try {
-        const handle = ((await pc!.readContract({ address: AGENT_ID, abi: agentAbi, functionName: "handleOf", args: [address!] })) as string).trim();
+        const handle = ((await pc!.readContract({ address: AGENT_ID, abi: agentAbi, functionName: "handleOf", args: [address!] } as any)) as string).trim();
         if (handle) name = handle.includes(".") ? handle : `${handle}.ai`;
       } catch {
         name = null; // collection without handleOf (for example the testnet mock)
